@@ -87,13 +87,23 @@
               <textarea name="cityDescription" id="cityDescription" class="form-control mb-2" placeholder="Description"></textarea>
           </div>
 
-          <div class="mb-3">
-              <textarea name="cityActivities" id="cityActivities" class="form-control mb-2" placeholder="Key Activities"></textarea>
-          </div>
+            <!-- Key Activities -->
+            <div class="mb-3">
+                <label for="cityActivities">Key Activities</label>
+                <div id="cityActivitiesWrapper">
+                    <input type="text" name="cityActivities[]" class="form-control mb-2" placeholder="Key Activity">
+                </div>
+                <button type="button" class="btn btn-info" id="addActivityBtn">➕ Add Activity</button>
+            </div>
 
-          <div class="mb-3">
-              <textarea name="cityHighlights" id="cityHighlights" class="form-control" placeholder="City Highlights"></textarea>
-          </div>
+            <!-- City Highlights -->
+            <div class="mb-3">
+                <label for="cityHighlights">City Highlights</label>
+                <div id="cityHighlightsWrapper">
+                    <input type="text" name="cityHighlights[]" class="form-control mb-2" placeholder="City Highlight">
+                </div>
+                <button type="button" class="btn btn-info" id="addHighlightBtn">➕ Add Highlight</button>
+            </div>
         </div>
 
        <div class="modal-footer">
@@ -104,3 +114,17 @@
     </div>
   </div>
 </div>
+
+
+
+<script>
+    $(document).ready(function () {
+        $('#addActivityBtn').click(function () {
+            $('#cityActivitiesWrapper').append('<input type="text" name="cityActivities[]" class="form-control mb-2" placeholder="Key Activity">');
+        });
+
+        $('#addHighlightBtn').click(function () {
+            $('#cityHighlightsWrapper').append('<input type="text" name="cityHighlights[]" class="form-control mb-2" placeholder="City Highlight">');
+        });
+    });
+</script>

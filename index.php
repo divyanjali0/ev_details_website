@@ -41,37 +41,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     /* -------------------- CITY -------------------- */
+
+    // Check if it's a City form submission
     if (isset($_POST['cityId'])) {
         $id          = $_POST['cityId'];
         $province_id = $_POST['cityProvince'];
         $district_id = $_POST['cityDistrict'];
         $description = $_POST['cityDescription'];
-        $activities  = $_POST['cityActivities'];
-        $highlights  = $_POST['cityHighlights'];
+        
+        // Get activities and highlights from the form, as arrays
+        $activities  = isset($_POST['cityActivities']) ? $_POST['cityActivities'] : [];
+        $highlights  = isset($_POST['cityHighlights']) ? $_POST['cityHighlights'] : [];
+
+        // Convert the arrays into JSON strings
+        $activities_json = json_encode($activities);
+        $highlights_json = json_encode($highlights);
 
         if ($province_id == '' || $district_id == '') {
             die("Province and District are required");
         }
 
+        // If ID is empty, we are creating a new city
         if ($id == '') {
             $stmt = $conn->prepare(
                 "INSERT INTO cities (province_id, district_id, description, key_activities, highlights)
                  VALUES (?, ?, ?, ?, ?)"
             );
-            $stmt->bind_param("iisss", $province_id, $district_id, $description, $activities, $highlights);
-        } else {
+            $stmt->bind_param("iisss", $province_id, $district_id, $description, $activities_json, $highlights_json);
+        } else {  // Otherwise, we are updating an existing city
             $stmt = $conn->prepare(
                 "UPDATE cities
                  SET province_id=?, district_id=?, description=?, key_activities=?, highlights=?
                  WHERE id=?"
             );
-            $stmt->bind_param("iisssi", $province_id, $district_id, $description, $activities, $highlights, $id);
+            $stmt->bind_param("iisssi", $province_id, $district_id, $description, $activities_json, $highlights_json, $id);
         }
 
         $stmt->execute();
         header("Location: index.php#cities");
         exit;
     }
+
+
 }
 ?>
 
@@ -125,24 +136,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <div id='province$pIndex' class='accordion-collapse collapse'>
                                 <div class='accordion-body d-flex gap-3'>";
 
-                        $cities = $conn->query("SELECT c.*, d.name AS district_name FROM cities c LEFT JOIN districts d ON c.district_id=d.id WHERE c.province_id={$province['id']}");
-                        if($cities->num_rows>0){
-                            while($city=$cities->fetch_assoc()){
-                                echo "<div class='col-12 col-md-6 col-lg-3 card mb-2'>
-                                        <div class='card-body'>
-                                            <span class='badge bg-secondary'>District: {$city['district_name']}</span>
-                                            <p>{$city['description']}</p>
-                                            <p><strong>Activities:</strong> {$city['key_activities']}</p>
-                                            <p><strong>Highlights:</strong> {$city['highlights']}</p>
+                                $cities = $conn->query("SELECT c.*, d.name AS district_name FROM cities c LEFT JOIN districts d ON c.district_id=d.id WHERE c.province_id={$province['id']}");
+                                if ($cities->num_rows > 0) {
+                                    while ($city = $cities->fetch_assoc()) {
+                                        // Decode the JSON data into an array
+                                        $activities = json_decode($city['key_activities']);
+                                        $highlights = json_decode($city['highlights']);
+
+                                        echo "<div class='col-12 col-md-6 col-lg-3 card mb-2'>
+                                                <div class='card-body'>
+                                                    <span class='badge bg-secondary'>District: {$city['district_name']}</span>
+                                                    <p>{$city['description']}</p>
+                                                    <p><strong>Activities:</strong><ul>";
+                                        foreach ($activities as $activity) {
+                                            echo "<li>{$activity}</li>";
+                                        }
+                                        echo "</ul></p>
+                                            <p><strong>Highlights:</strong><ul>";
+                                        foreach ($highlights as $highlight) {
+                                            echo "<li>{$highlight}</li>";
+                                        }
+                                        echo "</ul></p>
                                             <button class='btn btn-sm btn-warning editCityBtn'
-                                                data-id='{$city['id']}'
-                                                data-province='{$city['province_id']}'
-                                                data-district='{$city['district_id']}'
-                                                data-description='".htmlspecialchars($city['description'], ENT_QUOTES)."'
-                                                data-activities='".htmlspecialchars($city['key_activities'], ENT_QUOTES)."'
-                                                data-highlights='".htmlspecialchars($city['highlights'], ENT_QUOTES)."'>Edit</button>
-                                        </div></div>";
-                            }
+                                                    data-id='{$city['id']}'
+                                                    data-province='{$city['province_id']}'
+                                                    data-district='{$city['district_id']}'
+                                                    data-description='".htmlspecialchars($city['description'], ENT_QUOTES)."'
+                                                    data-activities='".htmlspecialchars(json_encode($activities), ENT_QUOTES)."'
+                                                    data-highlights='".htmlspecialchars(json_encode($highlights), ENT_QUOTES)."'>Edit</button>
+                                            </div></div>";
+                                    }
                         } else { echo "<p>No cities yet.</p>"; }
                         echo "</div></div></div>";
                     }
@@ -259,17 +282,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $('#cityId').val(btn.data('id'));
             $('#cityDescription').val(btn.data('description'));
-            $('#cityActivities').val(btn.data('activities'));
-            $('#cityHighlights').val(btn.data('highlights'));
-            $('#cityProvince').val(btn.data('province'));
 
-            $('#citySubmitBtn').text('Update');
+            let activities = btn.data('activities') || [];
+            let highlights = btn.data('highlights') || [];
+
+            $('#cityActivitiesWrapper').html('');
+            $('#cityHighlightsWrapper').html('');
+
+            activities.forEach(function (activity) {
+                $('#cityActivitiesWrapper').append(
+                    '<input type="text" name="cityActivities[]" class="form-control mb-2" value="' + activity + '">'
+                );
+            });
+
+            highlights.forEach(function (highlight) {
+                $('#cityHighlightsWrapper').append(
+                    '<input type="text" name="cityHighlights[]" class="form-control mb-2" value="' + highlight + '">'
+                );
+            });
+
+            $('#cityProvince').val(btn.data('province'));
 
             $.get('get_districts.php', { province_id: btn.data('province') }, function (data) {
                 $('#cityDistrict').html(data);
                 $('#cityDistrict').val(btn.data('district'));
             });
 
+            $('#citySubmitBtn').text('Update');
             $('#cityModal').modal('show');
         });
 
