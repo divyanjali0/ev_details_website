@@ -57,7 +57,7 @@
     <div class="modal-content">
       <form method="POST" id="cityForm">
         <div class="modal-header">
-          <h5 class="modal-title">City</h5>
+          <h5 class="modal-title">Details</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">

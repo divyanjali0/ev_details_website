@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $stmt->execute();
-        header("Location: index.php");
+        header("Location: index.php#provinces");
         exit;
     }
 
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $stmt->execute();
-        header("Location: index.php");
+        header("Location: index.php#districts");
         exit;
     }
 
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $stmt->execute();
-        header("Location: index.php");
+        header("Location: index.php#cities");
         exit;
     }
 }
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <hr class="bg-white">
     <ul class="nav flex-column">
         <li class="nav-item"><a class="nav-link text-white" href="#" data-bs-toggle="tab" data-bs-target="#dashboard">Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="#" data-bs-toggle="tab" data-bs-target="#cities">Cities</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="#" data-bs-toggle="tab" data-bs-target="#cities">City Details</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="#" data-bs-toggle="tab" data-bs-target="#provinces">Provinces</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="#" data-bs-toggle="tab" data-bs-target="#districts">Districts</a></li>
     </ul>
@@ -111,8 +111,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <!-- Cities -->
         <div class="tab-pane fade" id="cities">
-            <h3>Cities</h3>
-            <button class="btn btn-success mb-3" id="addCityBtn">➕ Add City</button>
+            <h3>City Details</h3>
+            <button class="btn btn-success mb-3" id="addCityBtn">➕ Add Details</button>
             <div class="accordion" id="provinceAccordion">
                 <?php
                     $provinces = $conn->query("SELECT * FROM provinces");
@@ -283,6 +283,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         });
     });
 </script>
+
+<script>
+$(document).ready(function () {
+    if (window.location.hash) {
+        const triggerEl = document.querySelector(
+            `a[data-bs-target="${window.location.hash}"]`
+        );
+        if (triggerEl) {
+            new bootstrap.Tab(triggerEl).show();
+        }
+    }
+});
+</script>
+
 
 </body>
 </html>
