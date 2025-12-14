@@ -12,8 +12,8 @@
           <input type="text" name="provinceName" class="form-control" id="provinceName" placeholder="Province Name" required>
         </div>
         <div class="modal-footer">
-          <button type="submit" name="save" class="btn btn-danger">Cancel</button>
-          <button type="submit" name="update" class="btn btn-warning">Update</button>
+          <button type="submit" name="save" class="btn btn-success">Save</button>
+          <button type="submit" name="update" class="btn btn-danger">Cancel</button>
         </div>
       </form>
     </div>
@@ -43,8 +43,8 @@
           </select>
         </div>
         <div class="modal-footer">
-          <button type="submit" name="save" class="btn btn-danger">Cancel</button>
-          <button type="submit" name="update" class="btn btn-warning">Update</button>
+          <button type="submit" name="save" class="btn btn-success">Save</button>
+          <button type="submit" name="update" class="btn btn-danger">Cancel</button>
         </div>
       </form>
     </div>
@@ -83,16 +83,12 @@
               </select>
           </div>
 
-          <!-- <div class="mb-3">
-              <input type="text" name="cityName" id="cityName" class="form-control" placeholder="City Name" required>
-          </div> -->
-
           <div class="mb-3">
-              <textarea name="cityDescription" id="cityDescription" class="form-control" placeholder="Description"></textarea>
+              <textarea name="cityDescription" id="cityDescription" class="form-control mb-2" placeholder="Description"></textarea>
           </div>
 
           <div class="mb-3">
-              <textarea name="cityActivities" id="cityActivities" class="form-control" placeholder="Key Activities"></textarea>
+              <textarea name="cityActivities" id="cityActivities" class="form-control mb-2" placeholder="Key Activities"></textarea>
           </div>
 
           <div class="mb-3">
@@ -101,8 +97,8 @@
         </div>
 
         <div class="modal-footer">
-          <button type="submit" name="save" class="btn btn-danger">Cancel</button>
-          <button type="submit" name="update" class="btn btn-warning">Update</button>
+          <button type="submit" name="save" class="btn btn-success">Save</button>
+          <button type="submit" name="update" class="btn btn-danger">Cancel</button>
         </div>
       </form>
     </div>

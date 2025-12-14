@@ -1,68 +1,97 @@
 <?php
-include 'db.php';
+    include 'db.php';
 
-// Handle form submissions
-if(isset($_POST['save']) || isset($_POST['update'])) {
+    if(isset($_POST['save']) || isset($_POST['update'])) {
 
-    // Province
-    if(isset($_POST['provinceName'])){
-        $name = $_POST['provinceName'];
-        $id = $_POST['provinceId'];
-        if(isset($_POST['save'])){
-            $stmt = $conn->prepare("INSERT INTO provinces (name) VALUES (?)");
-            $stmt->bind_param("s", $name);
-            $stmt->execute();
-        } else {
-            $stmt = $conn->prepare("UPDATE provinces SET name=? WHERE id=?");
-            $stmt->bind_param("si", $name, $id);
-            $stmt->execute();
+        // -------------------- PROVINCE --------------------
+        if(isset($_POST['provinceId'])) {
+            $name = $_POST['provinceName'];
+            $id = $_POST['provinceId'];
+
+            if(isset($_POST['save']) && $id == '') {
+                $stmt = $conn->prepare("INSERT INTO provinces (name) VALUES (?)");
+                $stmt->bind_param("s", $name);
+                $stmt->execute();
+            } elseif(isset($_POST['update']) && $id != '') {
+                $stmt = $conn->prepare("UPDATE provinces SET name=? WHERE id=?");
+                $stmt->bind_param("si", $name, $id);
+                $stmt->execute();
+            }
+            header("Location: index.php");
+            exit;
         }
-        header("Location: index.php");
-        exit;
-    }
 
-    // District
-    if(isset($_POST['districtName'])){
-        $name = $_POST['districtName'];
-        $province_id = $_POST['districtProvince'];
-        $id = $_POST['districtId'];
-        if(isset($_POST['save'])){
-            $stmt = $conn->prepare("INSERT INTO districts (name, province_id) VALUES (?, ?)");
-            $stmt->bind_param("si", $name, $province_id);
-            $stmt->execute();
-        } else {
-            $stmt = $conn->prepare("UPDATE districts SET name=?, province_id=? WHERE id=?");
-            $stmt->bind_param("sii", $name, $province_id, $id);
-            $stmt->execute();
+        // -------------------- DISTRICT --------------------
+        if(isset($_POST['districtId'])) {
+            $name = $_POST['districtName'];
+            $province_id = $_POST['province_id']; 
+            $id = $_POST['districtId'];
+
+            if(isset($_POST['save']) && $id == '') {
+                $stmt = $conn->prepare("INSERT INTO districts (name, province_id) VALUES (?, ?)");
+                $stmt->bind_param("si", $name, $province_id);
+                $stmt->execute();
+            } elseif(isset($_POST['update']) && $id != '') {
+                $stmt = $conn->prepare("UPDATE districts SET name=?, province_id=? WHERE id=?");
+                $stmt->bind_param("sii", $name, $province_id, $id);
+                $stmt->execute();
+            }
+            header("Location: index.php");
+            exit;
         }
-        header("Location: index.php");
-        exit;
-    }
 
-    // City
-    if(isset($_POST['cityName'])){
-        $name = $_POST['cityName'];
-        $province_id = $_POST['cityProvince'];
-        $district_id = $_POST['cityDistrict'];
-        $description = $_POST['cityDescription'];
-        $activities = $_POST['cityActivities'];
-        $highlights = $_POST['cityHighlights'];
-        $id = $_POST['cityId'];
+        // -------------------- CITY --------------------
+        if (isset($_POST['cityId'])) {
 
-        if(isset($_POST['save'])){
-            $stmt = $conn->prepare("INSERT INTO cities (name, province_id, district_id, description, key_activities, highlights) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("siisss", $name, $province_id, $district_id, $description, $activities, $highlights);
-            $stmt->execute();
-        } else {
-            $stmt = $conn->prepare("UPDATE cities SET name=?, province_id=?, district_id=?, description=?, key_activities=?, highlights=? WHERE id=?");
-            $stmt->bind_param("siisssi", $name, $province_id, $district_id, $description, $activities, $highlights, $id);
-            $stmt->execute();
+            $province_id = $_POST['cityProvince'] ?? '';
+            $district_id = $_POST['cityDistrict'] ?? '';
+            $description = $_POST['cityDescription'] ?? '';
+            $activities  = $_POST['cityActivities'] ?? '';
+            $highlights  = $_POST['cityHighlights'] ?? '';
+            $id          = $_POST['cityId'];
+
+            if ($province_id == '' || $district_id == '') {
+                die("Province and District are required for city!");
+            }
+
+            if (isset($_POST['save']) && $id == '') {
+                $stmt = $conn->prepare(
+                    "INSERT INTO cities 
+                    (province_id, district_id, description, key_activities, highlights) 
+                    VALUES (?, ?, ?, ?, ?)"
+                );
+                $stmt->bind_param(
+                    "iisss",
+                    $province_id,
+                    $district_id,
+                    $description,
+                    $activities,
+                    $highlights
+                );
+                $stmt->execute();
+
+            } elseif (isset($_POST['update']) && $id != '') {
+                $stmt = $conn->prepare(
+                    "UPDATE cities 
+                    SET province_id=?, district_id=?, description=?, key_activities=?, highlights=? 
+                    WHERE id=?"
+                );
+                $stmt->bind_param(
+                    "iisssi",
+                    $province_id,
+                    $district_id,
+                    $description,
+                    $activities,
+                    $highlights,
+                    $id
+                );
+                $stmt->execute();
+            }
+
+            header("Location: index.php");
+            exit;
         }
-        header("Location: index.php");
-        exit;
     }
-
-}
 ?>
 
 <!DOCTYPE html>
@@ -169,20 +198,19 @@ if(isset($_POST['save']) || isset($_POST['update'])) {
                             <h2 class='accordion-header'>
                             <button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#province$pIndex'>{$province['name']}</button></h2>
                             <div id='province$pIndex' class='accordion-collapse collapse'>
-                            <div class='accordion-body'>";
+                            <div class='accordion-body d-flex gap-3'>";
+
                     $cities = $conn->query("SELECT c.*, d.name AS district_name FROM cities c LEFT JOIN districts d ON c.district_id=d.id WHERE c.province_id={$province['id']}");
                     if($cities->num_rows>0){
                         while($city=$cities->fetch_assoc()){
-                            echo "<div class='card mb-2'>
+                            echo "<div class='col-12 col-md-6 col-lg-3 card mb-2'>
                                     <div class='card-body'>
-                                        <h5>{$city['name']}</h5>
                                         <span class='badge bg-secondary'>District: {$city['district_name']}</span>
                                         <p>{$city['description']}</p>
                                         <p><strong>Activities:</strong> {$city['key_activities']}</p>
                                         <p><strong>Highlights:</strong> {$city['highlights']}</p>
                                         <button class='btn btn-sm btn-warning editCityBtn'
                                             data-id='{$city['id']}'
-                                            data-name='{$city['name']}'
                                             data-province='{$city['province_id']}'
                                             data-district='{$city['district_id']}'
                                             data-description='".htmlspecialchars($city['description'], ENT_QUOTES)."'
@@ -242,7 +270,6 @@ $(document).ready(function(){
     $('.editCityBtn').click(function(){
         var btn = $(this);
         $('#cityId').val(btn.data('id'));
-        // $('#cityName').val(btn.data('name'));
         $('#cityDescription').val(btn.data('description'));
         $('#cityActivities').val(btn.data('activities'));
         $('#cityHighlights').val(btn.data('highlights'));
