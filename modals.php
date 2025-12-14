@@ -12,7 +12,7 @@
           <input type="text" name="provinceName" class="form-control" id="provinceName" placeholder="Province Name" required>
         </div>
         <div class="modal-footer">
-          <button type="submit" name="save" class="btn btn-success">Save</button>
+          <button type="submit" name="save" class="btn btn-danger">Cancel</button>
           <button type="submit" name="update" class="btn btn-warning">Update</button>
         </div>
       </form>
@@ -43,7 +43,7 @@
           </select>
         </div>
         <div class="modal-footer">
-          <button type="submit" name="save" class="btn btn-success">Save</button>
+          <button type="submit" name="save" class="btn btn-danger">Cancel</button>
           <button type="submit" name="update" class="btn btn-warning">Update</button>
         </div>
       </form>
@@ -83,9 +83,9 @@
               </select>
           </div>
 
-          <div class="mb-3">
+          <!-- <div class="mb-3">
               <input type="text" name="cityName" id="cityName" class="form-control" placeholder="City Name" required>
-          </div>
+          </div> -->
 
           <div class="mb-3">
               <textarea name="cityDescription" id="cityDescription" class="form-control" placeholder="Description"></textarea>
@@ -101,7 +101,7 @@
         </div>
 
         <div class="modal-footer">
-          <button type="submit" name="save" class="btn btn-success">Save</button>
+          <button type="submit" name="save" class="btn btn-danger">Cancel</button>
           <button type="submit" name="update" class="btn btn-warning">Update</button>
         </div>
       </form>

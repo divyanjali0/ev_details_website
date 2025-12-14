@@ -242,7 +242,7 @@ $(document).ready(function(){
     $('.editCityBtn').click(function(){
         var btn = $(this);
         $('#cityId').val(btn.data('id'));
-        $('#cityName').val(btn.data('name'));
+        // $('#cityName').val(btn.data('name'));
         $('#cityDescription').val(btn.data('description'));
         $('#cityActivities').val(btn.data('activities'));
         $('#cityHighlights').val(btn.data('highlights'));
