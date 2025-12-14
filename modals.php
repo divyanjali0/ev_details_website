@@ -11,10 +11,10 @@
           <input type="hidden" name="provinceId" id="provinceId">
           <input type="text" name="provinceName" class="form-control" id="provinceName" placeholder="Province Name" required>
         </div>
-        <div class="modal-footer">
-          <button type="submit" name="save" class="btn btn-success">Save</button>
-          <button type="submit" name="update" class="btn btn-danger">Cancel</button>
+       <div class="modal-footer">
+            <button type="submit" class="btn btn-success" id="provinceSubmitBtn">Save</button>
         </div>
+
       </form>
     </div>
   </div>
@@ -43,9 +43,9 @@
           </select>
         </div>
         <div class="modal-footer">
-          <button type="submit" name="save" class="btn btn-success">Save</button>
-          <button type="submit" name="update" class="btn btn-danger">Cancel</button>
+            <button type="submit" class="btn btn-success" id="districtSubmitBtn">Save</button>
         </div>
+
       </form>
     </div>
   </div>
@@ -96,10 +96,10 @@
           </div>
         </div>
 
-        <div class="modal-footer">
-          <button type="submit" name="save" class="btn btn-success">Save</button>
-          <button type="submit" name="update" class="btn btn-danger">Cancel</button>
+       <div class="modal-footer">
+            <button type="submit" class="btn btn-success" id="citySubmitBtn">Save</button>
         </div>
+
       </form>
     </div>
   </div>
