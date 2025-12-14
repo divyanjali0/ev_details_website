@@ -93,9 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <hr class="bg-white">
     <ul class="nav flex-column">
         <li class="nav-item"><a class="nav-link text-white" href="#" data-bs-toggle="tab" data-bs-target="#dashboard">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="#" data-bs-toggle="tab" data-bs-target="#cities">Cities</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="#" data-bs-toggle="tab" data-bs-target="#provinces">Provinces</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="#" data-bs-toggle="tab" data-bs-target="#districts">Districts</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="#" data-bs-toggle="tab" data-bs-target="#cities">Cities</a></li>
     </ul>
 </div>
 
@@ -109,64 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p>Select a section from the sidebar to manage Provinces, Districts, and Cities.</p>
         </div>
 
-        <!-- Provinces -->
-        <div class="tab-pane fade" id="provinces">
-            <h3>Provinces</h3>
-            <button class="btn btn-success mb-3" id="addProvinceBtn">➕ Add Province</button>
-            <table class="table table-bordered">
-                <thead>
-                <tr><th>#</th><th>Name</th><th>Actions</th></tr>
-                </thead>
-                <tbody>
-                <?php
-                $res = $conn->query("SELECT * FROM provinces");
-                $i=1;
-                while($row=$res->fetch_assoc()){
-                    echo "<tr>
-                            <td>$i</td>
-                            <td>{$row['name']}</td>
-                            <td>
-                                <button class='btn btn-sm btn-warning editProvinceBtn' data-id='{$row['id']}' data-name='{$row['name']}'>Edit</button>
-                                <a href='delete_province.php?id={$row['id']}' class='btn btn-sm btn-danger' onclick='return confirm(\"Are you sure?\")'>Delete</a>
-                            </td>
-                          </tr>";
-                    $i++;
-                }
-                ?>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Districts -->
-        <div class="tab-pane fade" id="districts">
-            <h3>Districts</h3>
-            <button class="btn btn-success mb-3" id="addDistrictBtn">➕ Add District</button>
-            <table class="table table-bordered">
-                <thead>
-                <tr><th>#</th><th>Name</th><th>Province</th><th>Actions</th></tr>
-                </thead>
-                <tbody>
-                <?php
-                $res = $conn->query("SELECT d.*, p.name as province_name FROM districts d LEFT JOIN provinces p ON d.province_id=p.id");
-                $i=1;
-                while($row=$res->fetch_assoc()){
-                    echo "<tr>
-                            <td>$i</td>
-                            <td>{$row['name']}</td>
-                            <td>{$row['province_name']}</td>
-                            <td>
-                                <button class='btn btn-sm btn-warning editDistrictBtn' data-id='{$row['id']}' data-name='{$row['name']}' data-province='{$row['province_id']}'>Edit</button>
-                                <a href='delete_district.php?id={$row['id']}' class='btn btn-sm btn-danger' onclick='return confirm(\"Are you sure?\")'>Delete</a>
-                            </td>
-                          </tr>";
-                    $i++;
-                }
-                ?>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Cities -->
+                <!-- Cities -->
         <div class="tab-pane fade" id="cities">
             <h3>Cities</h3>
             <button class="btn btn-success mb-3" id="addCityBtn">➕ Add City</button>
@@ -198,7 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                 data-description='".htmlspecialchars($city['description'], ENT_QUOTES)."'
                                                 data-activities='".htmlspecialchars($city['key_activities'], ENT_QUOTES)."'
                                                 data-highlights='".htmlspecialchars($city['highlights'], ENT_QUOTES)."'>Edit</button>
-                                            <a href='delete_city.php?id={$city['id']}' class='btn btn-sm btn-danger' onclick='return confirm(\"Are you sure?\")'>Delete</a>
                                         </div></div>";
                             }
                         } else { echo "<p>No cities yet.</p>"; }
@@ -207,6 +149,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ?>
             </div>
         </div>
+
+        <!-- Provinces -->
+        <div class="tab-pane fade" id="provinces">
+            <h3>Provinces</h3>
+            <button class="btn btn-success mb-3" id="addProvinceBtn">➕ Add Province</button>
+            <table class="table table-bordered">
+                <thead>
+                <tr><th>#</th><th>Name</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                <?php
+                $res = $conn->query("SELECT * FROM provinces");
+                $i=1;
+                while($row=$res->fetch_assoc()){
+                    echo "<tr>
+                            <td>$i</td>
+                            <td>{$row['name']}</td>
+                            <td>
+                                <button class='btn btn-sm btn-warning editProvinceBtn' data-id='{$row['id']}' data-name='{$row['name']}'>Edit</button>
+                            </td>
+                          </tr>";
+                    $i++;
+                }
+                ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Districts -->
+        <div class="tab-pane fade" id="districts">
+            <h3>Districts</h3>
+            <button class="btn btn-success mb-3" id="addDistrictBtn">➕ Add District</button>
+            <table class="table table-bordered">
+                <thead>
+                <tr><th>#</th><th>Name</th><th>Province</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                <?php
+                $res = $conn->query("SELECT d.*, p.name as province_name FROM districts d LEFT JOIN provinces p ON d.province_id=p.id");
+                $i=1;
+                while($row=$res->fetch_assoc()){
+                    echo "<tr>
+                            <td>$i</td>
+                            <td>{$row['name']}</td>
+                            <td>{$row['province_name']}</td>
+                            <td>
+                                <button class='btn btn-sm btn-warning editDistrictBtn' data-id='{$row['id']}' data-name='{$row['name']}' data-province='{$row['province_id']}'>Edit</button>
+                            </td>
+                          </tr>";
+                    $i++;
+                }
+                ?>
+                </tbody>
+            </table>
+        </div>
+
+
 
     </div>
 </div>
