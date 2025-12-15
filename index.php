@@ -40,14 +40,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    /* -------------------- CITY -------------------- */
-
     // Check if it's a City form submission
     if (isset($_POST['cityId'])) {
         $id          = $_POST['cityId'];
         $province_id = $_POST['cityProvince'];
         $district_id = $_POST['cityDistrict'];
         $description = $_POST['cityDescription'];
+        $cityName = $_POST['cityName'];
         
         // Get activities and highlights from the form, as arrays
         $activities  = isset($_POST['cityActivities']) ? $_POST['cityActivities'] : [];
@@ -63,26 +62,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // If ID is empty, we are creating a new city
         if ($id == '') {
+
             $stmt = $conn->prepare(
-                "INSERT INTO cities (province_id, district_id, description, key_activities, highlights)
-                 VALUES (?, ?, ?, ?, ?)"
+                "INSERT INTO cities (province_id, district_id, name, description, key_activities, highlights)
+                VALUES (?, ?, ?, ?, ?, ?)"
             );
-            $stmt->bind_param("iisss", $province_id, $district_id, $description, $activities_json, $highlights_json);
-        } else {  // Otherwise, we are updating an existing city
+
+            $stmt->bind_param(
+                "iissss",
+                $province_id,
+                $district_id,
+                $cityName,
+                $description,
+                $activities_json,
+                $highlights_json
+            );
+
+        } else {
+
             $stmt = $conn->prepare(
                 "UPDATE cities
-                 SET province_id=?, district_id=?, description=?, key_activities=?, highlights=?
-                 WHERE id=?"
+                SET province_id=?, district_id=?, name=?, description=?, key_activities=?, highlights=?
+                WHERE id=?"
             );
-            $stmt->bind_param("iisssi", $province_id, $district_id, $description, $activities_json, $highlights_json, $id);
+
+            $stmt->bind_param(
+                "iissssi",
+                $province_id,
+                $district_id,
+                $cityName,
+                $description,
+                $activities_json,
+                $highlights_json,
+                $id
+            );
         }
 
         $stmt->execute();
         header("Location: index.php#cities");
         exit;
     }
-
-
 }
 ?>
 
@@ -90,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Sri Lanka Admin</title>
+    <title>Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -162,6 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                     data-province='{$city['province_id']}'
                                                     data-district='{$city['district_id']}'
                                                     data-description='".htmlspecialchars($city['description'], ENT_QUOTES)."'
+                                                    data-name='".htmlspecialchars($city['name'], ENT_QUOTES)."'
                                                     data-activities='".htmlspecialchars(json_encode($activities), ENT_QUOTES)."'
                                                     data-highlights='".htmlspecialchars(json_encode($highlights), ENT_QUOTES)."'>Edit</button>
                                             </div></div>";
@@ -282,6 +302,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $('#cityId').val(btn.data('id'));
             $('#cityDescription').val(btn.data('description'));
+            $('#cityName').val(btn.data('name'));
 
             let activities = btn.data('activities') || [];
             let highlights = btn.data('highlights') || [];

@@ -84,6 +84,10 @@
           </div>
 
           <div class="mb-3">
+            <input type="text" name="cityName" id="cityName" class="form-control mb-2" placeholder="Enter City Name">
+          </div>
+
+          <div class="mb-3">
               <textarea name="cityDescription" id="cityDescription" class="form-control mb-2" placeholder="Description"></textarea>
           </div>
 
